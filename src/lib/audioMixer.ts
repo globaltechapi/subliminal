@@ -6,6 +6,15 @@
  */
 
 export type VoiceType = "male" | "female";
+export type AffirmationType = "text" | "audio";
+
+export interface Affirmation {
+  id: string;
+  text: string;
+  type: AffirmationType;
+  audioFile?: File;
+  audioUrl?: string;
+}
 
 export interface MixSettings {
   frequency: number; // How often affirmations play (in seconds)
@@ -24,7 +33,7 @@ export interface MixSettings {
  */
 export async function createSubliminalTrack(
   musicFile: File | string,
-  affirmations: string[],
+  affirmations: Affirmation[],
   settings: MixSettings,
   voiceType: VoiceType = "male",
 ): Promise<Blob> {
@@ -73,11 +82,13 @@ export async function createSubliminalTrack(
       // Start the music
       musicSource.start(0);
 
-      // Generate speech for each affirmation using actual Web Speech API
-      // First, we'll create all the speech buffers using the Speech API
+      // Generate speech for each affirmation using actual Web Speech API or use uploaded audio
+      // First, we'll create all the speech buffers using the Speech API or from uploaded files
       const speechBuffers = await Promise.all(
         affirmations.map((affirmation) =>
-          generateSpeechBuffer(offlineContext, affirmation, voiceType),
+          affirmation.type === "audio" && affirmation.audioFile
+            ? generateAudioBufferFromFile(offlineContext, affirmation.audioFile)
+            : generateSpeechBuffer(offlineContext, affirmation.text, voiceType),
         ),
       );
 
@@ -484,6 +495,28 @@ function createEnhancedSpeechBuffer(
     sample = (sample * syllableEnvelope + noise) * envelope * 0.4; // Adjust volume
 
     // Add slight stereo effect for more natural sound
+
+    // Generate AudioBuffer from an uploaded audio file
+    async function generateAudioBufferFromFile(
+      context: BaseAudioContext,
+      file: File,
+    ): Promise<AudioBuffer> {
+      return new Promise(async (resolve, reject) => {
+        try {
+          // Read the file as an ArrayBuffer
+          const arrayBuffer = await file.arrayBuffer();
+
+          // Decode the audio data
+          const audioBuffer = await context.decodeAudioData(arrayBuffer);
+          resolve(audioBuffer);
+        } catch (error) {
+          console.error("Error processing uploaded audio file:", error);
+          // If there's an error, create a fallback buffer
+          createEnhancedSpeechBuffer(context, file.name, "male").then(resolve);
+        }
+      });
+    }
+
     leftChannel[i] = sample;
     rightChannel[i] =
       sample * 0.95 + (Math.random() * 2 - 1) * noiseLevel * 0.5;

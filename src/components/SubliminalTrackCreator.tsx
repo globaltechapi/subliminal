@@ -4,7 +4,11 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Card, CardContent } from "./ui/card";
 import { MusicSelector } from "./music/MusicSelector";
-import { AffirmationEditor, VoiceType } from "./affirmations/AffirmationEditor";
+import {
+  AffirmationEditor,
+  VoiceType,
+  Affirmation,
+} from "./affirmations/AffirmationEditor";
 import { TrackSettings } from "./settings/TrackSettings";
 import { TrackDownloader } from "./download/TrackDownloader";
 
@@ -18,7 +22,7 @@ export function SubliminalTrackCreator({
   const [activeTab, setActiveTab] = useState("music");
   const [selectedMusic, setSelectedMusic] = useState<File | null>(null);
   const [selectedMusicUrl, setSelectedMusicUrl] = useState<string>("");
-  const [affirmations, setAffirmations] = useState<string[]>([]);
+  const [affirmations, setAffirmations] = useState<Affirmation[]>([]);
   const [voiceType, setVoiceType] = useState<VoiceType>("male");
   const [settings, setSettings] = useState({
     frequency: 60, // seconds
@@ -36,7 +40,7 @@ export function SubliminalTrackCreator({
   };
 
   const handleAffirmationsComplete = (
-    affirmationsList: string[],
+    affirmationsList: Affirmation[],
     selectedVoiceType: VoiceType,
   ) => {
     setAffirmations(affirmationsList);

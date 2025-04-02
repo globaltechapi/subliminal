@@ -11,12 +11,12 @@ import {
 import { getAudioDuration, formatDuration } from "@/lib/audioUtils";
 import { Download, Save, Music, Clock } from "lucide-react";
 
-import { VoiceType } from "../affirmations/AffirmationEditor";
+import { VoiceType, Affirmation } from "../affirmations/AffirmationEditor";
 
 interface TrackDownloaderProps {
   music: File | null;
   musicUrl: string;
-  affirmations: string[];
+  affirmations: Affirmation[];
   voiceType: VoiceType;
   settings: {
     frequency: number;
@@ -76,7 +76,10 @@ export function TrackDownloader({
         "Using music source:",
         typeof musicSource === "string" ? musicSource : musicSource.name,
       );
-      console.log("Affirmations to mix:", affirmations);
+      console.log(
+        "Affirmations to mix:",
+        affirmations.map((a) => ({ text: a.text, type: a.type })),
+      );
       console.log("Settings:", settings);
 
       // Generate the subliminal track with affirmations mixed in
@@ -199,9 +202,23 @@ export function TrackDownloader({
       });
 
       // Add affirmations, voice type, and settings as JSON strings
-      form.append("affirmations", JSON.stringify(affirmations));
+      // For affirmations, we need to handle the audio files separately
+      const affirmationsData = affirmations.map((aff) => ({
+        id: aff.id,
+        text: aff.text,
+        type: aff.type,
+        // We don't include the audioFile or audioUrl here as they can't be serialized
+      }));
+      form.append("affirmations", JSON.stringify(affirmationsData));
       form.append("voiceType", voiceType);
       form.append("settings", JSON.stringify(settings));
+
+      // Add each audio file separately
+      affirmations.forEach((aff, index) => {
+        if (aff.type === "audio" && aff.audioFile) {
+          form.append(`affirmationAudio_${aff.id}`, aff.audioFile);
+        }
+      });
 
       // Submit the form to the server action
       const saveResponse = await fetch("/api/save-track", {
@@ -240,10 +257,14 @@ export function TrackDownloader({
       <div className="space-y-4">
         <h3 className="text-lg font-medium">Your Subliminal Track</h3>
         <p className="text-sm text-muted-foreground">
-          Your track contains {affirmations.length} affirmations with a{" "}
-          {voiceType} voice, mixed with your music at {settings.volume * 100}%
-          volume, repeating {settings.repeatCycles} times every{" "}
-          {settings.frequency} seconds.
+          Your track contains {affirmations.length} affirmations (
+          {affirmations.filter((a) => a.type === "text").length} text,{" "}
+          {affirmations.filter((a) => a.type === "audio").length} recorded) with{" "}
+          {affirmations.filter((a) => a.type === "text").length > 0
+            ? `a ${voiceType} voice`
+            : ""}
+          mixed with your music at {settings.volume * 100}% volume, repeating{" "}
+          {settings.repeatCycles} times every {settings.frequency} seconds.
         </p>
         <p className="text-xs text-muted-foreground">
           Your affirmations are spoken with a real human voice and mixed with

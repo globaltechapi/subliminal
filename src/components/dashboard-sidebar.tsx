@@ -6,6 +6,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Music, Settings, Download, LogOut } from "lucide-react";
 import { signOutAction } from "@/app/actions";
+import { useEffect, useState } from "react";
+import { createClient } from "../../supabase/client";
 
 interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
   items: {
@@ -17,6 +19,38 @@ interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
 
 export function DashboardSidebar({ className }: { className?: string }) {
   const pathname = usePathname();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      try {
+        const supabase = createClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!user) return;
+
+        // Check if user email matches admin email
+        if (user.email === "rajan.knm18@gmail.com") {
+          setIsAdmin(true);
+          return;
+        }
+
+        // Fallback to database check
+        const { data } = await supabase
+          .from("users")
+          .select("is_super_admin")
+          .eq("id", user.id)
+          .single();
+
+        setIsAdmin(!!data?.is_super_admin);
+      } catch (error) {
+        console.error("Error checking admin status:", error);
+      }
+    };
+
+    checkAdmin();
+  }, []);
 
   const items = [
     {
@@ -65,6 +99,16 @@ export function DashboardSidebar({ className }: { className?: string }) {
                   <span>{item.title}</span>
                 </Link>
               ))}
+              {/* Admin Link */}
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  className="flex items-center rounded-md px-3 py-2 text-sm font-medium bg-blue-100 text-blue-700 hover:bg-blue-200"
+                >
+                  <span className="mr-2">⚙️</span>
+                  Admin Panel
+                </Link>
+              )}
             </nav>
           </div>
         </div>

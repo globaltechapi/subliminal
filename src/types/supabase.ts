@@ -9,6 +9,99 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      content_settings: {
+        Row: {
+          created_at: string | null
+          id: string
+          key: string
+          updated_at: string | null
+          value: Json
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          key: string
+          updated_at?: string | null
+          value: Json
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          key?: string
+          updated_at?: string | null
+          value?: Json
+        }
+        Relationships: []
+      }
+      music_library: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          duration: string
+          id: string
+          name: string
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          duration: string
+          id?: string
+          name: string
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          duration?: string
+          id?: string
+          name?: string
+          updated_at?: string | null
+          url?: string
+        }
+        Relationships: []
+      }
+      packages: {
+        Row: {
+          created_at: string | null
+          currency: string
+          description: string | null
+          duration_days: number
+          features: Json | null
+          id: string
+          is_active: boolean
+          name: string
+          price: number
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          currency?: string
+          description?: string | null
+          duration_days?: number
+          features?: Json | null
+          id?: string
+          is_active?: boolean
+          name: string
+          price?: number
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          currency?: string
+          description?: string | null
+          duration_days?: number
+          features?: Json | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          price?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       saved_tracks: {
         Row: {
           affirmations: Json | null
@@ -89,6 +182,7 @@ export type Database = {
           full_name: string | null
           id: string
           image: string | null
+          is_super_admin: boolean | null
           name: string | null
           token_identifier: string
           updated_at: string | null
@@ -101,6 +195,7 @@ export type Database = {
           full_name?: string | null
           id: string
           image?: string | null
+          is_super_admin?: boolean | null
           name?: string | null
           token_identifier: string
           updated_at?: string | null
@@ -113,6 +208,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           image?: string | null
+          is_super_admin?: boolean | null
           name?: string | null
           token_identifier?: string
           updated_at?: string | null

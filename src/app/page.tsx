@@ -1,6 +1,7 @@
 import Footer from "@/components/footer";
 import Hero from "@/components/hero";
 import Navbar from "@/components/navbar";
+import PricingTable from "@/components/PricingTable";
 import {
   ArrowUpRight,
   Music,
@@ -94,6 +95,9 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* Pricing Section */}
+      <PricingTable />
 
       {/* CTA Section */}
       <section className="py-20 bg-gray-50">
