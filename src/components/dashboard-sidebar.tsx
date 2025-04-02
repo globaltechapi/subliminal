@@ -174,36 +174,6 @@ export function DashboardSidebar({ className }: { className?: string }) {
                 </Link>
               ))}
             </nav>
-
-            <h3 className="mt-6 px-3 text-sm font-semibold text-muted-foreground">
-              Legal
-            </h3>
-            <nav className="space-y-2">
-              <Link
-                href="/privacy-policy"
-                className={cn(
-                  "flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
-                  pathname === "/privacy-policy"
-                    ? "bg-accent text-accent-foreground"
-                    : "transparent",
-                )}
-              >
-                <MessageSquareText className="mr-2 h-4 w-4" />
-                <span>Privacy Policy</span>
-              </Link>
-              <Link
-                href="/terms-of-service"
-                className={cn(
-                  "flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
-                  pathname === "/terms-of-service"
-                    ? "bg-accent text-accent-foreground"
-                    : "transparent",
-                )}
-              >
-                <MessageSquareText className="mr-2 h-4 w-4" />
-                <span>Terms of Service</span>
-              </Link>
-            </nav>
           </div>
         </div>
       </div>
