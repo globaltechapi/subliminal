@@ -33,8 +33,8 @@ export function SubliminalTrackCreator({
 
   const handleMusicSelected = (file: File | null, url: string) => {
     setSelectedMusic(file);
-    setSelectedMusicUrl(url);
-    if (file || url) {
+    setSelectedMusicUrl(""); // Always set to empty string since library is removed
+    if (file) {
       setActiveTab("affirmations");
     }
   };
