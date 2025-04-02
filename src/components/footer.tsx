@@ -40,7 +40,7 @@ export default function Footer() {
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-8 lg:gap-16">
             <div>
-              <h3 className="font-semibold text-gray-900 mb-4">Product</h3>
+              <h3 className="font-semibold text-gray-900 mb-4">Quick Links</h3>
               <ul className="space-y-3">
                 <li>
                   <Link
@@ -60,15 +60,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="#"
-                    className="text-gray-600 hover:text-blue-600 transition-colors"
-                  >
-                    Music Library
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
+                    href="/dashboard/affirmations"
                     className="text-gray-600 hover:text-blue-600 transition-colors"
                   >
                     Affirmation Templates
@@ -82,7 +74,7 @@ export default function Footer() {
               <ul className="space-y-3">
                 <li>
                   <Link
-                    href="#"
+                    href="/subliminal-guide"
                     className="text-gray-600 hover:text-blue-600 transition-colors"
                   >
                     Subliminal Guide
@@ -90,7 +82,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="#"
+                    href="/affirmation-tips"
                     className="text-gray-600 hover:text-blue-600 transition-colors"
                   >
                     Affirmation Tips
@@ -98,7 +90,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="#"
+                    href="/faq"
                     className="text-gray-600 hover:text-blue-600 transition-colors"
                   >
                     FAQ
@@ -106,7 +98,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="#"
+                    href="/blog"
                     className="text-gray-600 hover:text-blue-600 transition-colors"
                   >
                     Blog
@@ -120,15 +112,7 @@ export default function Footer() {
               <ul className="space-y-3">
                 <li>
                   <Link
-                    href="#"
-                    className="text-gray-600 hover:text-blue-600 transition-colors"
-                  >
-                    Help Center
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
+                    href="/contact-us"
                     className="text-gray-600 hover:text-blue-600 transition-colors"
                   >
                     Contact Us
@@ -136,7 +120,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="#"
+                    href="/privacy-policy"
                     className="text-gray-600 hover:text-blue-600 transition-colors"
                   >
                     Privacy Policy
@@ -144,7 +128,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="#"
+                    href="/terms-of-service"
                     className="text-gray-600 hover:text-blue-600 transition-colors"
                   >
                     Terms of Service

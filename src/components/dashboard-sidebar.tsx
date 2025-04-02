@@ -4,7 +4,14 @@ import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Music, Settings, Download, LogOut } from "lucide-react";
+import {
+  Home,
+  Music,
+  Settings,
+  Download,
+  LogOut,
+  MessageSquareText,
+} from "lucide-react";
 import { signOutAction } from "@/app/actions";
 import { useEffect, useState } from "react";
 import { createClient } from "../../supabase/client";
@@ -52,7 +59,7 @@ export function DashboardSidebar({ className }: { className?: string }) {
     checkAdmin();
   }, []);
 
-  const items = [
+  const dashboardItems = [
     {
       title: "Dashboard",
       href: "/dashboard",
@@ -69,9 +76,42 @@ export function DashboardSidebar({ className }: { className?: string }) {
       icon: <Music className="mr-2 h-4 w-4" />,
     },
     {
+      title: "Affirmations",
+      href: "/dashboard/affirmations",
+      icon: <MessageSquareText className="mr-2 h-4 w-4" />,
+    },
+    {
       title: "Settings",
       href: "/dashboard/settings",
       icon: <Settings className="mr-2 h-4 w-4" />,
+    },
+  ];
+
+  const mainMenuItems = [
+    {
+      title: "Subliminal Guide",
+      href: "/subliminal-guide",
+      icon: <Download className="mr-2 h-4 w-4" />,
+    },
+    {
+      title: "Affirmation Tips",
+      href: "/affirmation-tips",
+      icon: <MessageSquareText className="mr-2 h-4 w-4" />,
+    },
+    {
+      title: "FAQ",
+      href: "/faq",
+      icon: <MessageSquareText className="mr-2 h-4 w-4" />,
+    },
+    {
+      title: "Blog",
+      href: "/blog",
+      icon: <MessageSquareText className="mr-2 h-4 w-4" />,
+    },
+    {
+      title: "Contact Us",
+      href: "/contact-us",
+      icon: <MessageSquareText className="mr-2 h-4 w-4" />,
     },
   ];
 
@@ -83,8 +123,11 @@ export function DashboardSidebar({ className }: { className?: string }) {
             Cognitive Rewire
           </h2>
           <div className="space-y-1">
+            <h3 className="px-3 text-sm font-semibold text-muted-foreground">
+              Dashboard
+            </h3>
             <nav className="space-y-2">
-              {items.map((item) => (
+              {dashboardItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -109,6 +152,57 @@ export function DashboardSidebar({ className }: { className?: string }) {
                   Admin Panel
                 </Link>
               )}
+            </nav>
+
+            <h3 className="mt-6 px-3 text-sm font-semibold text-muted-foreground">
+              Resources
+            </h3>
+            <nav className="space-y-2">
+              {mainMenuItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
+                    pathname === item.href
+                      ? "bg-accent text-accent-foreground"
+                      : "transparent",
+                  )}
+                >
+                  {item.icon}
+                  <span>{item.title}</span>
+                </Link>
+              ))}
+            </nav>
+
+            <h3 className="mt-6 px-3 text-sm font-semibold text-muted-foreground">
+              Legal
+            </h3>
+            <nav className="space-y-2">
+              <Link
+                href="/privacy-policy"
+                className={cn(
+                  "flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
+                  pathname === "/privacy-policy"
+                    ? "bg-accent text-accent-foreground"
+                    : "transparent",
+                )}
+              >
+                <MessageSquareText className="mr-2 h-4 w-4" />
+                <span>Privacy Policy</span>
+              </Link>
+              <Link
+                href="/terms-of-service"
+                className={cn(
+                  "flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
+                  pathname === "/terms-of-service"
+                    ? "bg-accent text-accent-foreground"
+                    : "transparent",
+                )}
+              >
+                <MessageSquareText className="mr-2 h-4 w-4" />
+                <span>Terms of Service</span>
+              </Link>
             </nav>
           </div>
         </div>

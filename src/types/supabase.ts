@@ -9,6 +9,30 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      affirmations: {
+        Row: {
+          affirmation: string
+          category: string
+          created_at: string | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          affirmation: string
+          category: string
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          affirmation?: string
+          category?: string
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       content_settings: {
         Row: {
           created_at: string | null
