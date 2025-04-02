@@ -127,17 +127,17 @@ export const resetPasswordAction = async (formData: FormData) => {
   const confirmPassword = formData.get("confirmPassword") as string;
 
   if (!password || !confirmPassword) {
-    encodedRedirect(
+    return encodedRedirect(
       "error",
-      "/protected/reset-password",
+      "/dashboard/settings",
       "Password and confirm password are required",
     );
   }
 
   if (password !== confirmPassword) {
-    encodedRedirect(
+    return encodedRedirect(
       "error",
-      "/dashboard/reset-password",
+      "/dashboard/settings",
       "Passwords do not match",
     );
   }
@@ -147,14 +147,18 @@ export const resetPasswordAction = async (formData: FormData) => {
   });
 
   if (error) {
-    encodedRedirect(
+    return encodedRedirect(
       "error",
-      "/dashboard/reset-password",
-      "Password update failed",
+      "/dashboard/settings",
+      "Password update failed: " + error.message,
     );
   }
 
-  encodedRedirect("success", "/protected/reset-password", "Password updated");
+  return encodedRedirect(
+    "success",
+    "/dashboard/settings",
+    "Password updated successfully",
+  );
 };
 
 export const signOutAction = async () => {

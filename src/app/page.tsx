@@ -19,12 +19,12 @@ export default async function Home() {
   } = await supabase.auth.getUser();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-amethyst-100 to-amethyst-200">
       <Navbar />
       <Hero />
 
       {/* Features Section */}
-      <section id="features" className="py-24 bg-white">
+      <section id="features" className="py-24 bg-amethyst-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4">
@@ -65,7 +65,7 @@ export default async function Home() {
             ].map((feature, index) => (
               <div
                 key={index}
-                className="p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow"
+                className="p-6 bg-white/90 rounded-xl shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="text-blue-600 mb-4">{feature.icon}</div>
                 <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
@@ -77,20 +77,20 @@ export default async function Home() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-20 bg-blue-600 text-white">
+      <section className="py-20 bg-amethyst-700 text-white">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-3 gap-8 text-center">
             <div>
               <div className="text-4xl font-bold mb-2">1000+</div>
-              <div className="text-blue-100">Affirmations Created</div>
+              <div className="text-amethyst-100">Affirmations Created</div>
             </div>
             <div>
               <div className="text-4xl font-bold mb-2">50+</div>
-              <div className="text-blue-100">Background Tracks</div>
+              <div className="text-amethyst-100">Background Tracks</div>
             </div>
             <div>
               <div className="text-4xl font-bold mb-2">100%</div>
-              <div className="text-blue-100">Private & Secure</div>
+              <div className="text-amethyst-100">Private & Secure</div>
             </div>
           </div>
         </div>
@@ -100,18 +100,18 @@ export default async function Home() {
       <PricingTable />
 
       {/* CTA Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-amethyst-100">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">
             Start Your Cognitive Rewiring Today
           </h2>
-          <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-amethyst-800 mb-8 max-w-2xl mx-auto">
             Transform your mindset and achieve your goals with personalized
             subliminal audio.
           </p>
           <a
             href="/dashboard"
-            className="inline-flex items-center px-6 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center px-6 py-3 text-white bg-amethyst-600 rounded-lg hover:bg-amethyst-700 transition-colors"
           >
             Start Creating Now
             <ArrowUpRight className="ml-2 w-4 h-4" />

@@ -7,12 +7,17 @@ import { Upload, Music, Play, Pause } from "lucide-react";
 
 interface MusicSelectorProps {
   onMusicSelected: (file: File | null, url: string) => void;
+  libraryUrl?: string;
 }
 
-export function MusicSelector({ onMusicSelected }: MusicSelectorProps) {
+export function MusicSelector({
+  onMusicSelected,
+  libraryUrl,
+}: MusicSelectorProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioError, setAudioError] = useState<string>("");
+  const [audioUrl, setAudioUrl] = useState<string>(libraryUrl || "");
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
@@ -52,6 +57,26 @@ export function MusicSelector({ onMusicSelected }: MusicSelectorProps) {
     };
   }, []);
 
+  // Handle library URL if provided
+  useEffect(() => {
+    if (libraryUrl && libraryUrl.trim() !== "") {
+      // Stop any currently playing audio
+      if (audioRef.current) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      }
+
+      setSelectedFile(null);
+      setAudioUrl(libraryUrl);
+      setAudioError("");
+
+      if (audioRef.current) {
+        audioRef.current.src = libraryUrl;
+        audioRef.current.load();
+      }
+    }
+  }, [libraryUrl]);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     if (file) {
@@ -66,6 +91,7 @@ export function MusicSelector({ onMusicSelected }: MusicSelectorProps) {
 
       // Create a temporary URL for the file
       const fileUrl = URL.createObjectURL(file);
+      setAudioUrl(fileUrl);
       if (audioRef.current) {
         audioRef.current.src = fileUrl;
         audioRef.current.load();
@@ -86,9 +112,16 @@ export function MusicSelector({ onMusicSelected }: MusicSelectorProps) {
         !audioRef.current.src ||
         audioRef.current.src === window.location.href
       ) {
-        if (selectedFile) {
-          const fileUrl = URL.createObjectURL(selectedFile);
-          audioRef.current.src = fileUrl;
+        // Check if we have a file or URL to play
+        if (selectedFile || audioUrl) {
+          // Set the source based on what we have
+          if (selectedFile) {
+            const fileUrl = URL.createObjectURL(selectedFile);
+            audioRef.current.src = fileUrl;
+          } else if (audioUrl) {
+            audioRef.current.src = audioUrl;
+          }
+
           audioRef.current.load();
 
           // Play after a short delay to ensure loading
@@ -141,7 +174,7 @@ export function MusicSelector({ onMusicSelected }: MusicSelectorProps) {
     }
 
     // Pass the selected music to the parent component
-    onMusicSelected(selectedFile, "");
+    onMusicSelected(selectedFile, audioUrl);
   };
 
   const triggerFileInput = () => {
@@ -154,6 +187,17 @@ export function MusicSelector({ onMusicSelected }: MusicSelectorProps) {
       return selectedFile.name.length > 20
         ? selectedFile.name.substring(0, 20) + "..."
         : selectedFile.name;
+    }
+    if (audioUrl && !selectedFile) {
+      // Extract filename from URL if possible
+      const urlParts = audioUrl.split("/");
+      const fileName = urlParts[urlParts.length - 1].split("?")[0];
+      if (fileName) {
+        return fileName.length > 20
+          ? fileName.substring(0, 20) + "..."
+          : fileName;
+      }
+      return "Library Track";
     }
     return "Continue";
   };
@@ -179,16 +223,25 @@ export function MusicSelector({ onMusicSelected }: MusicSelectorProps) {
           />
         </div>
 
-        {selectedFile && (
+        {(selectedFile || audioUrl) && (
           <div className="mt-4 p-4 bg-muted rounded-lg">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Music className="h-5 w-5 text-primary" />
                 <div>
-                  <p className="font-medium">{selectedFile.name}</p>
-                  <p className="text-xs text-gray-500">
-                    {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
-                  </p>
+                  {selectedFile ? (
+                    <>
+                      <p className="font-medium">{selectedFile.name}</p>
+                      <p className="text-xs text-gray-500">
+                        {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="font-medium">{getSelectedTrackName()}</p>
+                      <p className="text-xs text-gray-500">Library Track</p>
+                    </>
+                  )}
                 </div>
               </div>
               <Button variant="ghost" size="icon" onClick={togglePlayPause}>
@@ -212,11 +265,11 @@ export function MusicSelector({ onMusicSelected }: MusicSelectorProps) {
       <div className="flex justify-end mt-10 sticky bottom-0 bg-background pt-4 pb-2 z-10">
         <Button
           onClick={handleContinue}
-          disabled={!selectedFile}
+          disabled={!selectedFile && !audioUrl}
           size="lg"
           className="px-8"
         >
-          {selectedFile
+          {selectedFile || audioUrl
             ? `Continue with ${getSelectedTrackName()}`
             : "Continue"}
         </Button>
