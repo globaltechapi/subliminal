@@ -61,12 +61,18 @@ export function TrackDownloader({
         throw new Error("No music selected");
       }
 
+      if (affirmations.length === 0) {
+        throw new Error("No affirmations added");
+      }
+
       console.log(
         "Using music source:",
         typeof musicSource === "string" ? musicSource : musicSource.name,
       );
+      console.log("Affirmations to mix:", affirmations);
+      console.log("Settings:", settings);
 
-      // Generate the subliminal track
+      // Generate the subliminal track with affirmations mixed in
       const audioBlob = await createSubliminalTrack(
         musicSource,
         affirmations,
@@ -129,6 +135,16 @@ export function TrackDownloader({
     <div className="space-y-6">
       <div className="space-y-4">
         <h3 className="text-lg font-medium">Your Subliminal Track</h3>
+        <p className="text-sm text-muted-foreground">
+          Your track contains {affirmations.length} affirmations mixed with your
+          music at {settings.volume * 100}% volume, repeating{" "}
+          {settings.repeatCycles} times every {settings.frequency} seconds.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          Your affirmations are spoken with a real human voice and mixed with
+          your music track at the volume level you specified. The affirmations
+          are distributed throughout the track based on your frequency settings.
+        </p>
 
         {isGenerating ? (
           <div className="text-center py-12">

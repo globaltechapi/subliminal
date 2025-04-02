@@ -58,7 +58,14 @@ export function AffirmationEditor({
       // Use speech synthesis to preview the affirmation
       const utterance = new SpeechSynthesisUtterance(affirmations[index]);
       utterance.rate = 0.9; // Slightly slower than normal
+      utterance.volume = 1.0; // Full volume for preview
+      utterance.pitch = 1.0; // Normal pitch
       utterance.onend = () => {
+        setIsPlaying(false);
+        setPreviewingIndex(null);
+      };
+      utterance.onerror = (event) => {
+        console.error("Speech synthesis error:", event);
         setIsPlaying(false);
         setPreviewingIndex(null);
       };
