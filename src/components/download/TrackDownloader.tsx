@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -8,12 +8,16 @@ import {
   createSubliminalTrack,
   createDownloadableFile,
 } from "@/lib/audioMixer";
-import { Download, Save, Music } from "lucide-react";
+import { getAudioDuration, formatDuration } from "@/lib/audioUtils";
+import { Download, Save, Music, Clock } from "lucide-react";
+
+import { VoiceType } from "../affirmations/AffirmationEditor";
 
 interface TrackDownloaderProps {
   music: File | null;
   musicUrl: string;
   affirmations: string[];
+  voiceType: VoiceType;
   settings: {
     frequency: number;
     volume: number;
@@ -27,6 +31,7 @@ export function TrackDownloader({
   music,
   musicUrl,
   affirmations,
+  voiceType,
   settings,
   userId,
   onTrackGenerated,
@@ -36,6 +41,8 @@ export function TrackDownloader({
   const [trackTitle, setTrackTitle] = useState("My Subliminal Track");
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [trackDuration, setTrackDuration] = useState<number>(0);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     // Start generating the track when component mounts
@@ -43,7 +50,7 @@ export function TrackDownloader({
 
     // Clean up function to revoke object URLs when component unmounts
     return () => {
-      if (downloadUrl) {
+      if (downloadUrl && downloadUrl.startsWith("blob:")) {
         URL.revokeObjectURL(downloadUrl);
       }
     };
@@ -77,6 +84,7 @@ export function TrackDownloader({
         musicSource,
         affirmations,
         settings,
+        voiceType,
       );
 
       if (!audioBlob || audioBlob.size === 0) {
@@ -93,7 +101,7 @@ export function TrackDownloader({
       // Create a downloadable file with metadata
       const url = createDownloadableFile(audioBlob, {
         title: trackTitle,
-        artist: "Subliminal Creator",
+        artist: "Cognitive Rewire",
         album: "Custom Subliminals",
       });
 
@@ -101,6 +109,11 @@ export function TrackDownloader({
       if (!url) {
         throw new Error("Failed to create downloadable URL");
       }
+
+      // Get the duration of the audio
+      const duration = await getAudioDuration(audioBlob);
+      setTrackDuration(duration);
+      console.log("Track duration:", duration, "seconds");
 
       setDownloadUrl(url);
       onTrackGenerated(url);
@@ -118,11 +131,91 @@ export function TrackDownloader({
     setIsSaving(true);
 
     try {
-      // In a real implementation, this would save the track to the user's account
-      // For this demo, we'll just simulate a delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Get the actual duration from the audio element
+      let actualDuration = 0;
+      if (
+        audioRef.current &&
+        !isNaN(audioRef.current.duration) &&
+        audioRef.current.duration > 0
+      ) {
+        actualDuration = audioRef.current.duration;
+        console.log(
+          "Using actual audio duration for saving:",
+          actualDuration,
+          "seconds",
+        );
+      } else {
+        console.log(
+          "Audio element duration not available, will determine from blob",
+        );
+      }
 
-      // Success message or redirect could be implemented here
+      // Create a form to submit the track data
+      const form = new FormData();
+      form.append("trackTitle", trackTitle);
+
+      // Always fetch the blob and store as data URL to ensure we have the complete file
+      const audioResponse = await fetch(downloadUrl);
+      const blob = await audioResponse.blob();
+
+      // Make sure we're saving as MP3
+      const mp3Blob = new Blob([blob], { type: "audio/mp3" });
+
+      // Get the actual duration from the blob
+      try {
+        const blobDuration = await getAudioDuration(mp3Blob);
+        console.log("Determined duration from blob:", blobDuration, "seconds");
+        // Use the blob duration as it's more reliable
+        actualDuration = blobDuration;
+        console.log("Using actual blob duration for saving");
+      } catch (err) {
+        console.error("Error getting duration from blob:", err);
+        // If we can't get the duration from the blob, use what we have
+        if (actualDuration <= 0) {
+          actualDuration = trackDuration > 0 ? trackDuration : 10;
+          console.log("Using fallback duration:", actualDuration, "seconds");
+        }
+      }
+
+      console.log(
+        "Saving track with actual duration:",
+        actualDuration,
+        "seconds",
+      );
+
+      // Convert blob to data URL
+      const reader = new FileReader();
+      reader.readAsDataURL(mp3Blob);
+
+      await new Promise((resolve, reject) => {
+        reader.onloadend = () => {
+          // Store the data URL with the complete audio data
+          form.append("trackUrl", reader.result as string);
+          // Add the duration to the form data
+          form.append("duration", actualDuration.toString());
+          resolve(null);
+        };
+        reader.onerror = reject;
+      });
+
+      // Add affirmations, voice type, and settings as JSON strings
+      form.append("affirmations", JSON.stringify(affirmations));
+      form.append("voiceType", voiceType);
+      form.append("settings", JSON.stringify(settings));
+
+      // Submit the form to the server action
+      const saveResponse = await fetch("/api/save-track", {
+        method: "POST",
+        body: form,
+      });
+
+      if (!saveResponse.ok) {
+        throw new Error("Failed to save track");
+      }
+
+      // Redirect to the tracks page or show success message
+      window.location.href =
+        "/dashboard/tracks?message=Track+saved+successfully";
     } catch (err) {
       console.error("Error saving track:", err);
       setError("Failed to save track. Please try again.");
@@ -131,14 +224,26 @@ export function TrackDownloader({
     }
   };
 
+  // Update duration when audio metadata is loaded
+  const handleAudioMetadataLoaded = () => {
+    if (audioRef.current && !isNaN(audioRef.current.duration)) {
+      setTrackDuration(audioRef.current.duration);
+      console.log(
+        "Audio metadata loaded, duration:",
+        audioRef.current.duration,
+      );
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="space-y-4">
         <h3 className="text-lg font-medium">Your Subliminal Track</h3>
         <p className="text-sm text-muted-foreground">
-          Your track contains {affirmations.length} affirmations mixed with your
-          music at {settings.volume * 100}% volume, repeating{" "}
-          {settings.repeatCycles} times every {settings.frequency} seconds.
+          Your track contains {affirmations.length} affirmations with a{" "}
+          {voiceType} voice, mixed with your music at {settings.volume * 100}%
+          volume, repeating {settings.repeatCycles} times every{" "}
+          {settings.frequency} seconds.
         </p>
         <p className="text-xs text-muted-foreground">
           Your affirmations are spoken with a real human voice and mixed with
@@ -171,11 +276,17 @@ export function TrackDownloader({
             <div className="p-6 bg-muted rounded-lg">
               <div className="flex items-center gap-4 mb-6">
                 <Music className="h-10 w-10 text-primary" />
-                <div>
+                <div className="flex-1">
                   <h4 className="font-medium">Track Ready</h4>
                   <p className="text-sm text-muted-foreground">
                     Your subliminal track has been successfully created.
                   </p>
+                </div>
+                <div className="flex items-center text-muted-foreground">
+                  <Clock className="h-4 w-4 mr-1" />
+                  <span className="text-sm">
+                    {formatDuration(trackDuration)}
+                  </span>
                 </div>
               </div>
 
@@ -191,10 +302,13 @@ export function TrackDownloader({
                 </div>
 
                 <audio
+                  ref={audioRef}
                   controls
                   className="w-full mt-4"
                   src={downloadUrl}
-                  preload="auto"
+                  preload="metadata"
+                  crossOrigin="anonymous"
+                  onLoadedMetadata={handleAudioMetadataLoaded}
                   onError={(e) => {
                     console.error("Audio playback error:", e);
                     setError("Error playing audio. Please try again.");

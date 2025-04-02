@@ -5,142 +5,162 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-50 border-t border-gray-100">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-          {/* Product Column */}
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-4">Product</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="#features"
-                  className="text-gray-600 hover:text-blue-600"
-                >
-                  How It Works
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/dashboard"
-                  className="text-gray-600 hover:text-blue-600"
-                >
-                  Create Track
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-600 hover:text-blue-600">
-                  Music Library
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-600 hover:text-blue-600">
-                  Affirmation Templates
-                </Link>
-              </li>
-            </ul>
+    <footer className="bg-gradient-to-b from-white to-blue-50 border-t border-gray-100">
+      <div className="container mx-auto px-4 py-16">
+        <div className="flex flex-col md:flex-row justify-between mb-12">
+          <div className="mb-8 md:mb-0">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Cognitive Rewire
+            </h2>
+            <p className="text-gray-600 max-w-md mb-6">
+              Transform your mindset with personalized subliminal audio tracks
+              that blend your favorite music with powerful affirmations.
+            </p>
+            <div className="flex space-x-4">
+              <a
+                href="#"
+                className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors"
+              >
+                <Twitter className="h-5 w-5" />
+              </a>
+              <a
+                href="#"
+                className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors"
+              >
+                <Instagram className="h-5 w-5" />
+              </a>
+              <a
+                href="#"
+                className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors"
+              >
+                <Youtube className="h-5 w-5" />
+              </a>
+            </div>
           </div>
 
-          {/* Resources Column */}
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-4">Resources</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="#" className="text-gray-600 hover:text-blue-600">
-                  Subliminal Guide
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-600 hover:text-blue-600">
-                  Affirmation Tips
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-600 hover:text-blue-600">
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-600 hover:text-blue-600">
-                  Blog
-                </Link>
-              </li>
-            </ul>
-          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 lg:gap-16">
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-4">Product</h3>
+              <ul className="space-y-3">
+                <li>
+                  <Link
+                    href="#features"
+                    className="text-gray-600 hover:text-blue-600 transition-colors"
+                  >
+                    How It Works
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/dashboard"
+                    className="text-gray-600 hover:text-blue-600 transition-colors"
+                  >
+                    Create Track
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="text-gray-600 hover:text-blue-600 transition-colors"
+                  >
+                    Music Library
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="text-gray-600 hover:text-blue-600 transition-colors"
+                  >
+                    Affirmation Templates
+                  </Link>
+                </li>
+              </ul>
+            </div>
 
-          {/* Support Column */}
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-4">Support</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="#" className="text-gray-600 hover:text-blue-600">
-                  Help Center
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-600 hover:text-blue-600">
-                  Contact Us
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-600 hover:text-blue-600">
-                  Community
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-600 hover:text-blue-600">
-                  Feedback
-                </Link>
-              </li>
-            </ul>
-          </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-4">Resources</h3>
+              <ul className="space-y-3">
+                <li>
+                  <Link
+                    href="#"
+                    className="text-gray-600 hover:text-blue-600 transition-colors"
+                  >
+                    Subliminal Guide
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="text-gray-600 hover:text-blue-600 transition-colors"
+                  >
+                    Affirmation Tips
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="text-gray-600 hover:text-blue-600 transition-colors"
+                  >
+                    FAQ
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="text-gray-600 hover:text-blue-600 transition-colors"
+                  >
+                    Blog
+                  </Link>
+                </li>
+              </ul>
+            </div>
 
-          {/* Legal Column */}
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-4">Legal</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="#" className="text-gray-600 hover:text-blue-600">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-600 hover:text-blue-600">
-                  Terms of Service
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-600 hover:text-blue-600">
-                  Copyright
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-600 hover:text-blue-600">
-                  Cookies
-                </Link>
-              </li>
-            </ul>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-4">Support</h3>
+              <ul className="space-y-3">
+                <li>
+                  <Link
+                    href="#"
+                    className="text-gray-600 hover:text-blue-600 transition-colors"
+                  >
+                    Help Center
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="text-gray-600 hover:text-blue-600 transition-colors"
+                  >
+                    Contact Us
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="text-gray-600 hover:text-blue-600 transition-colors"
+                  >
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="text-gray-600 hover:text-blue-600 transition-colors"
+                  >
+                    Terms of Service
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-gray-200">
+        <div className="pt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center">
           <div className="text-gray-600 mb-4 md:mb-0">
-            © {currentYear} Subliminal Track Creator. All rights reserved.
+            © {currentYear} Cognitive Rewire. All rights reserved.
           </div>
-
-          <div className="flex space-x-6">
-            <a href="#" className="text-gray-400 hover:text-gray-500">
-              <span className="sr-only">Twitter</span>
-              <Twitter className="h-6 w-6" />
-            </a>
-            <a href="#" className="text-gray-400 hover:text-gray-500">
-              <span className="sr-only">Instagram</span>
-              <Instagram className="h-6 w-6" />
-            </a>
-            <a href="#" className="text-gray-400 hover:text-gray-500">
-              <span className="sr-only">YouTube</span>
-              <Youtube className="h-6 w-6" />
-            </a>
+          <div className="text-sm text-gray-500">
+            Designed with ❤️ for better mental wellbeing
           </div>
         </div>
       </div>

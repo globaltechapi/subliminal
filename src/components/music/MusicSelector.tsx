@@ -95,7 +95,7 @@ export function MusicSelector({ onMusicSelected }: MusicSelectorProps) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-10">
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="upload">Upload Music</TabsTrigger>
@@ -189,10 +189,12 @@ export function MusicSelector({ onMusicSelected }: MusicSelectorProps) {
         preload="auto"
       />
 
-      <div className="flex justify-end mt-6">
+      <div className="flex justify-end mt-10 sticky bottom-0 bg-background pt-4 pb-2 z-10">
         <Button
           onClick={handleContinue}
           disabled={!selectedFile && !selectedLibraryTrack}
+          size="lg"
+          className="px-8"
         >
           Continue
         </Button>

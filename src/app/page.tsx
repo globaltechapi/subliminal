@@ -26,10 +26,12 @@ export default async function Home() {
       <section id="features" className="py-24 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">How It Works</h2>
+            <h2 className="text-3xl font-bold mb-4">
+              How Cognitive Rewire Works
+            </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
               Create your personalized subliminal audio tracks in just a few
-              simple steps.
+              simple steps to transform your mindset.
             </p>
           </div>
 
@@ -97,7 +99,7 @@ export default async function Home() {
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">
-            Create Your Subliminal Track Today
+            Start Your Cognitive Rewiring Today
           </h2>
           <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
             Transform your mindset and achieve your goals with personalized

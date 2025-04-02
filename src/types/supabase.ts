@@ -9,6 +9,78 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      saved_tracks: {
+        Row: {
+          affirmations: Json | null
+          created_at: string | null
+          duration: number | null
+          id: string
+          settings: Json | null
+          track_title: string
+          track_url: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          affirmations?: Json | null
+          created_at?: string | null
+          duration?: number | null
+          id?: string
+          settings?: Json | null
+          track_title: string
+          track_url: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          affirmations?: Json | null
+          created_at?: string | null
+          duration?: number | null
+          id?: string
+          settings?: Json | null
+          track_title?: string
+          track_url?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      tracks: {
+        Row: {
+          affirmations: Json | null
+          created_at: string | null
+          duration: number | null
+          id: string
+          settings: Json | null
+          track_title: string
+          track_url: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          affirmations?: Json | null
+          created_at?: string | null
+          duration?: number | null
+          id?: string
+          settings?: Json | null
+          track_title: string
+          track_url: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          affirmations?: Json | null
+          created_at?: string | null
+          duration?: number | null
+          id?: string
+          settings?: Json | null
+          track_title?: string
+          track_url?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           avatar_url: string | null

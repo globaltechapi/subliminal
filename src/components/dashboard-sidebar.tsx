@@ -46,7 +46,7 @@ export function DashboardSidebar({ className }: { className?: string }) {
       <div className="space-y-4 py-4">
         <div className="px-4 py-2">
           <h2 className="mb-2 px-2 text-xl font-semibold tracking-tight">
-            Subliminal Creator
+            Cognitive Rewire
           </h2>
           <div className="space-y-1">
             <nav className="space-y-2">
@@ -69,11 +69,11 @@ export function DashboardSidebar({ className }: { className?: string }) {
           </div>
         </div>
       </div>
-      <div className="px-4 absolute bottom-4 w-full">
+      <div className="px-4 fixed bottom-4 w-64 pr-8">
         <form action={signOutAction}>
           <Button
             variant="outline"
-            className="w-full justify-start"
+            className="w-full justify-start rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
             type="submit"
           >
             <LogOut className="mr-2 h-4 w-4" />

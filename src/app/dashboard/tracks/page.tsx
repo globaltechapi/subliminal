@@ -4,6 +4,7 @@ import { createClient } from "../../../../supabase/server";
 import { Music, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { TrackCard } from "@/components/tracks/TrackCard";
 
 export default async function TracksPage() {
   const supabase = await createClient();
@@ -16,29 +17,41 @@ export default async function TracksPage() {
     return redirect("/sign-in");
   }
 
-  // In a real implementation, we would fetch the user's tracks from the database
-  const tracks: any[] = [];
+  // Fetch the user's tracks from the saved_tracks table
+  const { data: savedTracks, error } = await supabase
+    .from("saved_tracks")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching saved tracks:", error);
+  }
+
+  const userTracks = savedTracks || [];
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">My Tracks</h1>
+          <h1 className="text-3xl font-bold tracking-tight">My Saved Tracks</h1>
           <p className="text-muted-foreground mt-2">
             View and manage your saved subliminal tracks.
           </p>
         </div>
 
-        {tracks.length > 0 ? (
+        {userTracks.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {/* Track cards would go here */}
+            {userTracks.map((track) => (
+              <TrackCard key={track.id} track={track} />
+            ))}
           </div>
         ) : (
           <div className="text-center py-12 border border-dashed rounded-lg">
             <Music className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium mb-2">No tracks yet</h3>
+            <h3 className="text-lg font-medium mb-2">No saved tracks yet</h3>
             <p className="text-sm text-muted-foreground mb-6">
-              You haven't created any subliminal tracks yet.
+              You haven't saved any subliminal tracks yet.
             </p>
             <Button asChild>
               <Link href="/dashboard/create">Create Your First Track</Link>

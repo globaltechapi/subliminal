@@ -24,7 +24,11 @@ export default function DashboardNavbar() {
         <div className="flex items-center gap-4">
           <Sheet>
             <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="flex items-center justify-center"
+              >
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
@@ -32,8 +36,12 @@ export default function DashboardNavbar() {
               <DashboardSidebar />
             </SheetContent>
           </Sheet>
-          <Link href="/" prefetch className="text-xl font-bold">
-            Subliminal Creator
+          <Link
+            href="/"
+            prefetch
+            className="text-xl font-bold flex items-center h-10 pl-0"
+          >
+            Cognitive Rewire
           </Link>
         </div>
         <div className="flex gap-4 items-center">

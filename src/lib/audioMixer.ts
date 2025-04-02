@@ -5,6 +5,8 @@
  * for creating subliminal audio tracks.
  */
 
+export type VoiceType = "male" | "female";
+
 export interface MixSettings {
   frequency: number; // How often affirmations play (in seconds)
   volume: number; // Volume level for affirmations (0-1)
@@ -17,12 +19,14 @@ export interface MixSettings {
  * @param musicFile - The music file or URL to use as the base track
  * @param affirmations - Array of affirmation texts to convert to speech
  * @param settings - Settings for mixing (frequency, volume, repeat cycles)
+ * @param voiceType - Type of voice to use (male or female)
  * @returns Promise resolving to a Blob containing the mixed audio file
  */
 export async function createSubliminalTrack(
   musicFile: File | string,
   affirmations: string[],
   settings: MixSettings,
+  voiceType: VoiceType = "male",
 ): Promise<Blob> {
   // For this demo, we'll use a real audio file as a fallback
   const fallbackAudioUrl =
@@ -73,7 +77,7 @@ export async function createSubliminalTrack(
       // First, we'll create all the speech buffers using the Speech API
       const speechBuffers = await Promise.all(
         affirmations.map((affirmation) =>
-          generateSpeechBuffer(offlineContext, affirmation),
+          generateSpeechBuffer(offlineContext, affirmation, voiceType),
         ),
       );
 
@@ -260,15 +264,32 @@ function writeString(dataView: DataView, offset: number, string: string) {
 async function generateSpeechBuffer(
   context: BaseAudioContext,
   text: string,
+  voiceType: VoiceType = "male",
 ): Promise<AudioBuffer> {
   return new Promise((resolve) => {
     try {
-      // Select a voice with good quality
+      // Select a voice with good quality based on the requested voice type
       const voices = window.speechSynthesis.getVoices();
       const preferredVoice =
+        voices.find((voice) => {
+          const isEnglish = voice.lang.includes("en");
+          const isFemale =
+            voice.name.toLowerCase().includes("female") ||
+            voice.name.toLowerCase().includes("woman") ||
+            voice.name.includes("Samantha") ||
+            voice.name.includes("Victoria");
+          const isMale =
+            voice.name.toLowerCase().includes("male") ||
+            voice.name.toLowerCase().includes("man") ||
+            voice.name.includes("Daniel") ||
+            voice.name.includes("David");
+
+          return isEnglish && (voiceType === "female" ? isFemale : isMale);
+        }) ||
         voices.find(
           (voice) => voice.lang.includes("en") && voice.localService === false,
-        ) || voices[0];
+        ) ||
+        voices[0];
 
       // Create utterance with improved settings
       const utterance = new SpeechSynthesisUtterance(text);
@@ -278,7 +299,9 @@ async function generateSpeechBuffer(
       utterance.volume = 1.0;
 
       // Use a direct approach with a free TTS API as fallback
-      const ttsApiUrl = `https://api.streamelements.com/kappa/v2/speech?voice=Brian&text=${encodeURIComponent(text)}`;
+      // Select appropriate voice based on voiceType
+      const ttsVoice = voiceType === "female" ? "Amy" : "Brian";
+      const ttsApiUrl = `https://api.streamelements.com/kappa/v2/speech?voice=${ttsVoice}&text=${encodeURIComponent(text)}`;
 
       // Create an audio element to play the speech
       const audioElement = new Audio();
@@ -314,7 +337,7 @@ async function generateSpeechBuffer(
             } catch (decodeError) {
               console.error("Error decoding audio data:", decodeError);
               // Fall back to more reliable method if decoding fails
-              createHumanLikeVoice(context, text).then((buffer) => {
+              createHumanLikeVoice(context, text, voiceType).then((buffer) => {
                 resolve(buffer);
                 tempContext.close();
               });
@@ -339,14 +362,14 @@ async function generateSpeechBuffer(
           }, 5000);
         } catch (error) {
           console.error("Error processing TTS audio:", error);
-          createHumanLikeVoice(context, text).then(resolve);
+          createHumanLikeVoice(context, text, voiceType).then(resolve);
         }
       };
 
       // Handle errors with audio element
       audioElement.onerror = () => {
         console.error("Error loading TTS audio");
-        createHumanLikeVoice(context, text).then(resolve);
+        createHumanLikeVoice(context, text, voiceType).then(resolve);
       };
 
       // Set a timeout in case loading hangs
@@ -354,12 +377,12 @@ async function generateSpeechBuffer(
         if (audioElement.readyState < 2) {
           // HAVE_CURRENT_DATA or lower
           console.warn("TTS audio loading timed out, using fallback");
-          createHumanLikeVoice(context, text).then(resolve);
+          createHumanLikeVoice(context, text, voiceType).then(resolve);
         }
       }, 3000);
     } catch (error) {
       console.error("Error in speech generation:", error);
-      createHumanLikeVoice(context, text).then(resolve);
+      createHumanLikeVoice(context, text, voiceType).then(resolve);
     }
   });
 }
@@ -368,11 +391,14 @@ async function generateSpeechBuffer(
 async function createHumanLikeVoice(
   context: BaseAudioContext,
   text: string,
+  voiceType: VoiceType = "male",
 ): Promise<AudioBuffer> {
   // Try to use a different TTS API as another fallback
   try {
+    // Add voice parameter to the URL if the API supports it
+    const voiceParam = voiceType === "female" ? "&voice=female" : "&voice=male";
     const response = await fetch(
-      `https://tts.cyzon.us/tts?text=${encodeURIComponent(text)}`,
+      `https://tts.cyzon.us/tts?text=${encodeURIComponent(text)}${voiceParam}`,
     );
     if (response.ok) {
       const arrayBuffer = await response.arrayBuffer();
@@ -383,13 +409,14 @@ async function createHumanLikeVoice(
   }
 
   // If all else fails, create a synthetic but more natural sounding voice
-  return createEnhancedSpeechBuffer(context, text);
+  return createEnhancedSpeechBuffer(context, text, voiceType);
 }
 
 // Create an enhanced speech-like buffer that sounds more natural
 function createEnhancedSpeechBuffer(
   context: BaseAudioContext,
   text: string,
+  voiceType: VoiceType = "male",
 ): AudioBuffer {
   const duration = 2.0; // seconds (longer for more natural sound)
   const sampleRate = context.sampleRate;
@@ -406,11 +433,13 @@ function createEnhancedSpeechBuffer(
   }
 
   // More realistic formants (resonant frequencies) for human speech
+  // Adjust formants based on voice type (female voices have higher formants)
+  const formantMultiplier = voiceType === "female" ? 1.2 : 1.0;
   const formants = [
-    280 + (seed % 120), // First formant (around 300-500 Hz for vowels)
-    1200 + (seed % 600), // Second formant (around 1000-2000 Hz)
-    2500 + (seed % 500), // Third formant
-    3500 + (seed % 500), // Fourth formant
+    (280 + (seed % 120)) * formantMultiplier, // First formant (around 300-500 Hz for vowels)
+    (1200 + (seed % 600)) * formantMultiplier, // Second formant (around 1000-2000 Hz)
+    (2500 + (seed % 500)) * formantMultiplier, // Third formant
+    (3500 + (seed % 500)) * formantMultiplier, // Fourth formant
   ];
 
   // More realistic amplitude modulation to simulate syllables
@@ -467,12 +496,16 @@ function createEnhancedSpeechBuffer(
  * Generates a text-to-speech audio for a single affirmation
  *
  * @param text - The affirmation text
+ * @param voiceType - Type of voice to use (male or female)
  * @returns Promise resolving to an AudioBuffer
  */
-export async function textToSpeech(text: string): Promise<AudioBuffer> {
+export async function textToSpeech(
+  text: string,
+  voiceType: VoiceType = "male",
+): Promise<AudioBuffer> {
   const audioContext = new (window.AudioContext ||
     (window as any).webkitAudioContext)();
-  return generateSpeechBuffer(audioContext, text);
+  return generateSpeechBuffer(audioContext, text, voiceType);
 }
 
 /**

@@ -1,5 +1,12 @@
 import DashboardLayout from "@/components/dashboard-layout";
-import { InfoIcon, UserCircle, Music, Plus } from "lucide-react";
+import {
+  InfoIcon,
+  Music,
+  Plus,
+  Settings,
+  Headphones,
+  Sparkles,
+} from "lucide-react";
 import { redirect } from "next/navigation";
 import { createClient } from "../../../supabase/server";
 import { Button } from "@/components/ui/button";
@@ -21,58 +28,88 @@ export default async function Dashboard() {
       <div className="space-y-8">
         {/* Header Section */}
         <header className="flex flex-col gap-4">
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <div className="bg-secondary/50 text-sm p-3 px-4 rounded-lg text-muted-foreground flex gap-2 items-center">
-            <InfoIcon size="14" />
-            <span>Welcome to your Subliminal Creator dashboard</span>
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold tracking-tight">Welcome Back</h1>
+            <div className="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
+              <Sparkles size={16} />
+              <span>{user.email}</span>
+            </div>
+          </div>
+          <div className="bg-gradient-to-r from-primary/10 to-secondary/10 text-sm p-4 px-5 rounded-xl text-foreground flex gap-3 items-center border border-primary/10 shadow-sm">
+            <InfoIcon size={18} className="text-primary" />
+            <span className="font-medium">
+              Create and manage your subliminal tracks from your personal
+              dashboard
+            </span>
           </div>
         </header>
 
         {/* Quick Actions */}
-        <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <div className="bg-card rounded-xl p-6 border shadow-sm flex flex-col justify-between">
-            <div className="space-y-2">
-              <Music className="h-8 w-8 text-primary mb-2" />
-              <h3 className="font-semibold text-lg">Create New Track</h3>
-              <p className="text-sm text-muted-foreground">
-                Create a personalized subliminal track with your own
-                affirmations.
-              </p>
+        <section>
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <Sparkles size={18} className="text-primary" />
+            <span>Quick Actions</span>
+          </h2>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="bg-gradient-to-br from-card to-card/80 rounded-xl p-6 border shadow-md hover:shadow-lg transition-all duration-300 flex flex-col justify-between h-full">
+              <div className="space-y-3">
+                <div className="bg-primary/10 p-3 rounded-full w-fit">
+                  <Music className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="font-semibold text-lg">Create New Track</h3>
+                <p className="text-sm text-muted-foreground">
+                  Create a personalized subliminal track with your own
+                  affirmations and music selection.
+                </p>
+              </div>
+              <Button
+                asChild
+                className="mt-5 w-full bg-primary/90 hover:bg-primary shadow-sm"
+              >
+                <Link href="/dashboard/create">
+                  <Plus className="mr-2 h-4 w-4" /> Create Track
+                </Link>
+              </Button>
             </div>
-            <Button asChild className="mt-4">
-              <Link href="/dashboard/create">
-                <Plus className="mr-2 h-4 w-4" /> Create Track
-              </Link>
-            </Button>
-          </div>
 
-          <div className="bg-card rounded-xl p-6 border shadow-sm">
-            <div className="space-y-2">
-              <Music className="h-8 w-8 text-primary mb-2" />
-              <h3 className="font-semibold text-lg">My Tracks</h3>
-              <p className="text-sm text-muted-foreground">
-                View and manage your saved subliminal tracks.
-              </p>
+            <div className="bg-gradient-to-br from-card to-card/80 rounded-xl p-6 border shadow-md hover:shadow-lg transition-all duration-300 flex flex-col justify-between h-full">
+              <div className="space-y-3">
+                <div className="bg-secondary/10 p-3 rounded-full w-fit">
+                  <Headphones className="h-6 w-6 text-secondary" />
+                </div>
+                <h3 className="font-semibold text-lg">My Tracks</h3>
+                <p className="text-sm text-muted-foreground">
+                  View, manage and listen to your saved subliminal tracks
+                  collection.
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                asChild
+                className="mt-5 w-full border-secondary/20 hover:border-secondary/40 hover:bg-secondary/5"
+              >
+                <Link href="/dashboard/tracks">
+                  <Headphones className="mr-2 h-4 w-4" /> View Tracks
+                </Link>
+              </Button>
             </div>
-            <Button variant="outline" asChild className="mt-4">
-              <Link href="/dashboard/tracks">View Tracks</Link>
-            </Button>
-          </div>
-        </section>
 
-        {/* User Profile Section */}
-        <section className="bg-card rounded-xl p-6 border shadow-sm">
-          <div className="flex items-center gap-4 mb-6">
-            <UserCircle size={48} className="text-primary" />
-            <div>
-              <h2 className="font-semibold text-xl">User Profile</h2>
-              <p className="text-sm text-muted-foreground">{user.email}</p>
+            <div className="bg-gradient-to-br from-card to-card/80 rounded-xl p-6 border shadow-md hover:shadow-lg transition-all duration-300 flex flex-col justify-between h-full">
+              <div className="space-y-3">
+                <div className="bg-muted p-3 rounded-full w-fit">
+                  <Settings className="h-6 w-6 text-muted-foreground" />
+                </div>
+                <h3 className="font-semibold text-lg">Settings</h3>
+                <p className="text-sm text-muted-foreground">
+                  Customize your account preferences and application settings.
+                </p>
+              </div>
+              <Button variant="outline" asChild className="mt-5 w-full">
+                <Link href="/dashboard/settings">
+                  <Settings className="mr-2 h-4 w-4" /> Manage Settings
+                </Link>
+              </Button>
             </div>
-          </div>
-          <div className="bg-muted/50 rounded-lg p-4 overflow-hidden">
-            <pre className="text-xs font-mono max-h-48 overflow-auto">
-              {JSON.stringify(user, null, 2)}
-            </pre>
           </div>
         </section>
       </div>

@@ -6,15 +6,27 @@ import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Card, CardContent } from "../ui/card";
 import { Plus, X, Play, Pause } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Label } from "../ui/label";
+
+export type VoiceType = "male" | "female";
 
 interface AffirmationEditorProps {
-  onComplete: (affirmations: string[]) => void;
+  onComplete: (affirmations: string[], voiceType: VoiceType) => void;
   initialAffirmations?: string[];
+  initialVoiceType?: VoiceType;
 }
 
 export function AffirmationEditor({
   onComplete,
   initialAffirmations = [],
+  initialVoiceType = "male",
 }: AffirmationEditorProps) {
   const [affirmations, setAffirmations] = useState<string[]>(
     initialAffirmations.length > 0
@@ -24,6 +36,7 @@ export function AffirmationEditor({
   const [newAffirmation, setNewAffirmation] = useState("");
   const [previewingIndex, setPreviewingIndex] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [voiceType, setVoiceType] = useState<VoiceType>(initialVoiceType);
 
   const handleAddAffirmation = () => {
     if (newAffirmation.trim()) {
@@ -60,6 +73,30 @@ export function AffirmationEditor({
       utterance.rate = 0.9; // Slightly slower than normal
       utterance.volume = 1.0; // Full volume for preview
       utterance.pitch = 1.0; // Normal pitch
+
+      // Set voice based on selected voice type
+      const voices = window.speechSynthesis.getVoices();
+      const preferredVoice =
+        voices.find((voice) => {
+          const isEnglish = voice.lang.includes("en");
+          const isFemale =
+            voice.name.toLowerCase().includes("female") ||
+            voice.name.toLowerCase().includes("woman") ||
+            voice.name.includes("Samantha") ||
+            voice.name.includes("Victoria");
+          const isMale =
+            voice.name.toLowerCase().includes("male") ||
+            voice.name.toLowerCase().includes("man") ||
+            voice.name.includes("Daniel") ||
+            voice.name.includes("David");
+
+          return isEnglish && (voiceType === "female" ? isFemale : isMale);
+        }) ||
+        voices.find((voice) => voice.lang.includes("en")) ||
+        voices[0];
+
+      if (preferredVoice) utterance.voice = preferredVoice;
+
       utterance.onend = () => {
         setIsPlaying(false);
         setPreviewingIndex(null);
@@ -76,18 +113,38 @@ export function AffirmationEditor({
 
   const handleContinue = () => {
     if (affirmations.length > 0) {
-      onComplete(affirmations);
+      onComplete(affirmations, voiceType);
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-10">
       <div className="space-y-4">
         <h3 className="text-lg font-medium">Your Affirmations</h3>
         <p className="text-sm text-muted-foreground">
           Add the affirmations you want to include in your subliminal track.
           These will be mixed with your selected music.
         </p>
+
+        <div className="space-y-2">
+          <Label htmlFor="voice-type">Voice Type</Label>
+          <Select
+            value={voiceType}
+            onValueChange={(value) => setVoiceType(value as VoiceType)}
+          >
+            <SelectTrigger id="voice-type" className="w-full sm:w-[200px]">
+              <SelectValue placeholder="Select voice type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="male">Male Voice</SelectItem>
+              <SelectItem value="female">Female Voice</SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">
+            Choose the voice type for your affirmations. You can preview how it
+            sounds using the play button on each affirmation.
+          </p>
+        </div>
 
         {affirmations.length > 0 ? (
           <div className="space-y-3">
@@ -156,8 +213,13 @@ export function AffirmationEditor({
         </div>
       </div>
 
-      <div className="flex justify-end mt-6">
-        <Button onClick={handleContinue} disabled={affirmations.length === 0}>
+      <div className="flex justify-end mt-10 sticky bottom-0 bg-background pt-4 pb-2 z-10">
+        <Button
+          onClick={handleContinue}
+          disabled={affirmations.length === 0}
+          size="lg"
+          className="px-8"
+        >
           Continue
         </Button>
       </div>
